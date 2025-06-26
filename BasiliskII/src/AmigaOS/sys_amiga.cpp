@@ -216,7 +216,7 @@ void *Sys_open(const char *name, bool read_only)
 			return NULL;
 
 		// Open device
-		if (OpenDevice((UBYTE *) dev_name, dev_unit, (struct IORequest *)io, dev_flags)) {
+		if (OpenDevice((CONST_STRPTR) dev_name, dev_unit, (struct IORequest *)io, dev_flags)) {
 			D(bug(" couldn't open device\n"));
 			DeleteIORequest(io);
 			return NULL;
@@ -225,21 +225,21 @@ void *Sys_open(const char *name, bool read_only)
 		// Check for new style device
 		bool is_nsd = false, does_64bit = false;
 		struct NSDeviceQueryResult nsdqr;
-		nsdqr.DevQueryFormat = 0;
-		nsdqr.SizeAvailable = 0;
+		nsdqr.nsdqr_DevQueryFormat = 0;
+		nsdqr.nsdqr_SizeAvailable = 0;
 		io->io_Command = NSCMD_DEVICEQUERY;
 		io->io_Length = sizeof(nsdqr);
 		io->io_Data = (APTR)&nsdqr;
 		LONG error = DoIO((struct IORequest *)io);
 		D(bug("DEVICEQUERY returned %ld (length %ld, actual %ld)\n", error, io->io_Length, io->io_Actual));
-		if ((!error) && (io->io_Actual >= 16) && (io->io_Actual <= sizeof(nsdqr)) && (nsdqr.SizeAvailable == io->io_Actual)) {
+		if ((!error) && (io->io_Actual >= 16) && (io->io_Actual <= sizeof(nsdqr)) && (nsdqr.nsdqr_SizeAvailable == io->io_Actual)) {
 
 			// Looks like an NSD
 			is_nsd = true;
-			D(bug(" new style device, type %ld\n", nsdqr.DeviceType));
+			D(bug(" new style device, type %ld\n", nsdqr.nsdqr_DeviceType));
 
 			// We only work with trackdisk-like devices
-			if (nsdqr.DeviceType != NSDEVTYPE_TRACKDISK) {
+			if (nsdqr.nsdqr_DeviceType != NSDEVTYPE_TRACKDISK) {
 				CloseDevice((struct IORequest *)io);
 				DeleteIORequest(io);
 				return NULL;
@@ -247,7 +247,7 @@ void *Sys_open(const char *name, bool read_only)
 
 			// Check whether device is 64 bit capable
 			UWORD *cmdcheck;
-			for (cmdcheck = nsdqr.SupportedCommands; *cmdcheck; cmdcheck++) {
+			for (cmdcheck = (UWORD *)nsdqr.nsdqr_SupportedCommands; *cmdcheck; cmdcheck++) {
 				if (*cmdcheck == NSCMD_TD_READ64) {
 					D(bug(" supports 64 bit commands\n"));
 					does_64bit = true;

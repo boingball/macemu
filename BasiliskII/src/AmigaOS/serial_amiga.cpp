@@ -672,7 +672,7 @@ __saveds void ASERDPort::serial_func(void)
 		((IOExtPar *)read_io)->io_ParFlags = PARF_SHARED;
 	else
 		read_io->io_SerFlags = SERF_SHARED | SERF_7WIRE;
-	if (OpenDevice((UBYTE *) dev_name, dev_unit, (struct IORequest *)read_io, 0) || read_io->IOSer.io_Device == NULL)
+	if (OpenDevice((CONST_STRPTR)dev_name, dev_unit, (struct IORequest *)read_io, 0) || read_io->IOSer.io_Device == NULL)
 		goto quit;
 	opened = true;
 

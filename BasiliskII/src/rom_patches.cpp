@@ -42,6 +42,9 @@
 #define DEBUG 0
 #include "debug.h"
 
+#ifdef __AMIGA__
+#define MacFrameBaseMac24Bit 0x00500000
+#endif
 
 // Global variables
 uint32 UniversalInfo;		// ROM offset of UniversalInfo

@@ -102,7 +102,7 @@ void SCSIInit(void)
 					struct IOStdReq *io = (struct IOStdReq *)CreateIORequest(the_port, sizeof(struct IOStdReq));
 					if (io == NULL)
 						continue;
-					if (OpenDevice((UBYTE *) dev_name, dev_unit + lun * 10, (struct IORequest *)io, 0)) {
+					if (OpenDevice((CONST_STRPTR) dev_name, dev_unit + lun * 10, (struct IORequest *)io, 0)) {
 						DeleteIORequest(io);
 						continue;
 					}

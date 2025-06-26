@@ -5,9 +5,9 @@ CC = m68k-amigaos-gcc
 CXX = m68k-amigaos-g++
 CFLAGS = -g -O1 -noixemul -m68020 -msmall-code -Wno-multichar
 CXXFLAGS = $(CFLAGS)
-CPPFLAGS = -I../include -I../native_cpu -I.
+CPPFLAGS = -I../include -I../native_cpu -I. -I/opt/amiga13/gtlayoutsource -I/opt/amiga13/netinclude
 LDFLAGS = -noixemul
-LIBS = /gg/lib/libnix/swapstack.o
+LIBS = obj/stub_swapstack.o
 
 # VPATH so make can find files in parent dir
 VPATH = .:..

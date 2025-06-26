@@ -25,7 +25,7 @@
 #include <dos/filehandler.h>
 #include <intuition/intuition.h>
 #include <libraries/asl.h>
-#include <libraries/gtlayout.h>
+#include <gtlayout.h>
 #include <libraries/Picasso96.h>
 #include <cybergraphics/cybergraphics.h>
 #include <graphics/displayinfo.h>
@@ -35,7 +35,7 @@
 #include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/gadtools.h>
-#include <proto/gtlayout.h>
+#include <gtlayout_protos.h>
 #include <proto/graphics.h>
 #include <proto/asl.h>
 #include <proto/Picasso96.h>
@@ -45,7 +45,7 @@
 #include <inline/dos.h>
 #include <inline/intuition.h>
 #include <inline/gadtools.h>
-#include <inline/gtlayout.h>
+//#include <gtlayout_internal.h>
 #include <inline/graphics.h>
 #include <inline/asl.h>
 #include <inline/Picasso96.h>
@@ -526,9 +526,9 @@ bool PrefsEditor(void)
 								EasyStruct req;
 								req.es_StructSize = sizeof(EasyStruct);
 								req.es_Flags = 0;
-								req.es_Title = (UBYTE *)GetString(STR_ABOUT_TITLE);
-								req.es_TextFormat = (UBYTE *)str;
-								req.es_GadgetFormat = (UBYTE *)GetString(STR_OK_BUTTON);
+								req.es_Title = (CONST_STRPTR)GetString(STR_ABOUT_TITLE);
+								req.es_TextFormat = (CONST_STRPTR)str;
+								req.es_GadgetFormat = (CONST_STRPTR)GetString(STR_OK_BUTTON);
 								LT_LockWindow(win);
 								EasyRequest(win, &req, NULL);
 								LT_UnlockWindow(win);
@@ -1315,7 +1315,7 @@ static void screen_mode_req(struct Window *win, struct LayoutHandle *h)
 			TAG_END
 		);
 	} else {
-		UWORD ModelArray[] = { PIXFMT_LUT8, PIXFMT_RGB15, PIXFMT_ARGB32, 0, ~0 };
+		UWORD ModelArray[] = { PIXFMT_LUT8, PIXFMT_RGB15, PIXFMT_ARGB32, 0, 0xFFFF };
 		id = (ULONG) CModeRequestTags(NULL,
 			CYBRMREQ_MinDepth, 8,
 			CYBRMREQ_CModelArray, (ULONG) ModelArray,

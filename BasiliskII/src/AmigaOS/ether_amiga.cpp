@@ -424,7 +424,7 @@ static __saveds void net_func(void)
 
 	// Open device
 	control_io->ios2_BufferManagement = buffer_tags;
-	od_error = OpenDevice((UBYTE *) dev_name, dev_unit, (struct IORequest *)control_io, 0);
+	od_error = OpenDevice((CONST_STRPTR) dev_name, dev_unit, (struct IORequest *)control_io, 0);
 	if (od_error != 0 || control_io->ios2_Req.io_Device == 0) {
 		printf("WARNING: OpenDevice(<%s>, unit=%d) returned error %d)\n", (UBYTE *)dev_name, dev_unit, od_error);
 		goto quit;

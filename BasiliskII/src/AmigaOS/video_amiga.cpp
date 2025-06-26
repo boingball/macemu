@@ -525,7 +525,7 @@ static __saveds void periodic_func(void)
 		if (timer_port) {
 			timer_io = (struct timerequest *)CreateIORequest(timer_port, sizeof(struct timerequest));
 			if (timer_io) {
-				if (!OpenDevice((UBYTE *) TIMERNAME, UNIT_MICROHZ, (struct IORequest *)timer_io, 0)) {
+				if (!OpenDevice((CONST_STRPTR) TIMERNAME, UNIT_MICROHZ, (struct IORequest *)timer_io, 0)) {
 					timer_mask = 1 << timer_port->mp_SigBit;
 					timer_io->tr_node.io_Command = TR_ADDREQUEST;
 					timer_io->tr_time.tv_secs = 0;
