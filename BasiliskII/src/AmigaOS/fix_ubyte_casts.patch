@@ -1,0 +1,72 @@
+--- a/main_amiga.cpp
++++ b/main_amiga.cpp
+@@ -162,28 +162,28 @@
+ 
+ 	// Open required libraries
+-	GfxBase = OpenLibrary((UBYTE *) "graphics.library", 39);
++	GfxBase = OpenLibrary("graphics.library", 39);
+ 	if (GfxBase == NULL)
+ 		return 10;
+
+-	IntuitionBase = (struct IntuitionBase *)OpenLibrary((UBYTE *) "intuition.library", 39);
++	IntuitionBase = (struct IntuitionBase *)OpenLibrary("intuition.library", 39);
+ 	if (IntuitionBase == NULL)
+ 		return 10;
+
+-	DiskBase = (struct Library *)OpenResource((UBYTE *) "disk.resource");
++	DiskBase = (struct Library *)OpenResource("disk.resource");
+
+-	GadToolsBase = OpenLibrary((UBYTE *) "gadtools.library", 39);
++	GadToolsBase = OpenLibrary("gadtools.library", 39);
+
+-	IFFParseBase = OpenLibrary((UBYTE *) "iffparse.library", 39);
++	IFFParseBase = OpenLibrary("iffparse.library", 39);
+
+-	AslBase = OpenLibrary((UBYTE *) "asl.library", 36);
++	AslBase = OpenLibrary("asl.library", 36);
+
+-	if (FindTask((UBYTE *) "� Enforcer �")) {
++	if (FindTask("� Enforcer �")) {
+
+-	P96Base = OpenLibrary((UBYTE *) "Picasso96API.library", 2);
++	P96Base = OpenLibrary("Picasso96API.library", 2);
+-	CyberGfxBase = OpenLibrary((UBYTE *) "cybergraphics.library", 2);
++	CyberGfxBase = OpenLibrary("cybergraphics.library", 2);
+
+-	if (OpenDevice((UBYTE *) AHINAME, AHI_NO_UNIT, (struct IORequest *)ahi_io, 0) == 0) {
++	if (OpenDevice(AHINAME, AHI_NO_UNIT, (struct IORequest *)ahi_io, 0) == 0) {
+
+-	if ((uint32)FindName(&SysBase->MemList, (UBYTE *) "chip memory") < 0x2000) {
++	if ((uint32)FindName(&SysBase->MemList, "chip memory") < 0x2000) {
+
+-	if (OpenDevice((UBYTE *) TIMERNAME, UNIT_MICROHZ, (struct IORequest *)timereq, 0)) {
++	if (OpenDevice(TIMERNAME, UNIT_MICROHZ, (struct IORequest *)timereq, 0)) {
+
+@@ -553,7 +553,7 @@
+ 	// tick_func
+-	if (!OpenDevice((UBYTE *) TIMERNAME, UNIT_MICROHZ, (struct IORequest *)timer_io, 0)) {
++	if (!OpenDevice(TIMERNAME, UNIT_MICROHZ, (struct IORequest *)timer_io, 0)) {
+
+@@ ErrorAlert
+-	req.es_Title = (UBYTE *)GetString(STR_ERROR_ALERT_TITLE);
+-	req.es_TextFormat = (UBYTE *)GetString(STR_GUI_ERROR_PREFIX);
+-	req.es_GadgetFormat = (UBYTE *)GetString(STR_QUIT_BUTTON);
++	req.es_Title = GetString(STR_ERROR_ALERT_TITLE);
++	req.es_TextFormat = GetString(STR_GUI_ERROR_PREFIX);
++	req.es_GadgetFormat = GetString(STR_QUIT_BUTTON);
+
+@@ WarningAlert
+-	req.es_Title = (UBYTE *)GetString(STR_WARNING_ALERT_TITLE);
+-	req.es_TextFormat = (UBYTE *)GetString(STR_GUI_WARNING_PREFIX);
+-	req.es_GadgetFormat = (UBYTE *)GetString(STR_OK_BUTTON);
++	req.es_Title = GetString(STR_WARNING_ALERT_TITLE);
++	req.es_TextFormat = GetString(STR_GUI_WARNING_PREFIX);
++	req.es_GadgetFormat = GetString(STR_OK_BUTTON);
+
+@@ ChoiceAlert
+-	req.es_Title = (UBYTE *)GetString(STR_WARNING_ALERT_TITLE);
+-	req.es_TextFormat = (UBYTE *)GetString(STR_GUI_WARNING_PREFIX);
+-	req.es_GadgetFormat = (UBYTE *)str;
++	req.es_Title = GetString(STR_WARNING_ALERT_TITLE);
++	req.es_TextFormat = GetString(STR_GUI_WARNING_PREFIX);
++	req.es_GadgetFormat = (CONST_STRPTR)str;

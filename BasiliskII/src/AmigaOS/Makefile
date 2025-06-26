@@ -1,18 +1,20 @@
-# AmigaOS makefile for Basilisk II (GeekGadgets tool chain)
+# Makefile for BasiliskII with GAS-based asm_support.s (GCC-compatible)
 
-## System specific configuration
-CC = gcc
-CXX = c++
-CXXFLAGS = -g -O1 -noixemul -m68020 -msmall-code -Wno-multichar
+# Compiler settings
+CC = m68k-amigaos-gcc
+CXX = m68k-amigaos-g++
+CFLAGS = -g -O1 -noixemul -m68020 -msmall-code -Wno-multichar
+CXXFLAGS = $(CFLAGS)
 CPPFLAGS = -I../include -I../native_cpu -I.
-DEFS =
 LDFLAGS = -noixemul
 LIBS = /gg/lib/libnix/swapstack.o
-AS = PhxAss
-ASFLAGS = OPT ! INCPATH GG:os-include FPU=1
 
-## Files
-SRCS = ../main.cpp main_amiga.cpp ../prefs.cpp ../prefs_items.cpp \
+# VPATH so make can find files in parent dir
+VPATH = .:..
+
+# Sources
+SRCS = \
+    ../main.cpp main_amiga.cpp ../prefs.cpp ../prefs_items.cpp \
     prefs_amiga.cpp prefs_editor_amiga.cpp sys_amiga.cpp ../rom_patches.cpp \
     ../slot_rom.cpp ../rsrc_patches.cpp ../emul_op.cpp \
     ../macos_util.cpp ../xpram.cpp xpram_amiga.cpp ../timer.cpp \
@@ -20,45 +22,38 @@ SRCS = ../main.cpp main_amiga.cpp ../prefs.cpp ../prefs_items.cpp \
     serial_amiga.cpp ../ether.cpp ether_amiga.cpp ../sony.cpp ../disk.cpp \
     ../cdrom.cpp ../scsi.cpp scsi_amiga.cpp ../video.cpp video_amiga.cpp \
     ../audio.cpp audio_amiga.cpp ../extfs.cpp extfs_amiga.cpp \
-    ../user_strings.cpp user_strings_amiga.cpp asm_support.asm
+    ../user_strings.cpp user_strings_amiga.cpp asm_support.s
+
+# Output binary name
 APP = BasiliskII
 
-## Rules
-.PHONY: clean distclean
-.SUFFIXES:
-.SUFFIXES: .c .cpp .asm .o .h
-
-all: $(APP)
-
+# Object directory
 OBJ_DIR = obj
-$(OBJ_DIR)::
-	@[ -d $(OBJ_DIR) ] || mkdir $(OBJ_DIR) > /dev/null 2>&1
+OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.cpp=.o)))
+OBJS := $(OBJS:.c=.o)
+OBJS := $(OBJS:.s=.o)
 
-define SRCS_LIST_TO_OBJS
-	$(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(foreach file, $(SRCS), \
-	$(basename $(notdir $(file))))))
-endef
-OBJS = $(SRCS_LIST_TO_OBJS)
+# Default target
+all: $(OBJ_DIR) $(APP)
 
-SRC_PATHS += $(sort $(foreach file, $(SRCS), $(dir $(file))))
-VPATH :=
-VPATH += $(addprefix :, $(subst  ,:, $(filter-out $($(subst, :, ,$(VPATH))), $(SRC_PATHS))))
+$(OBJ_DIR):
+	@mkdir -p $(OBJ_DIR)
 
-$(APP): $(OBJ_DIR) $(OBJS)
-	$(CXX) -o $(APP) $(LDFLAGS) $(LIBS) $(OBJS)
+$(APP): $(OBJS)
+	$(CXX) -o $@ $(LDFLAGS) $(LIBS) $(OBJS)
+
+# Compile rules using VPATH
+$(OBJ_DIR)/%.o: %.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: %.s
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(APP) $(OBJ_DIR)/* *~ *.bak obj.0000.*
+	rm -f $(APP) $(OBJ_DIR)/*.o *~ *.bak
 
 distclean: clean
 	rm -rf $(OBJ_DIR)
-
-$(OBJ_DIR)/%.o : %.cpp
-	$(CXX) $(CPPFLAGS) $(DEFS) $(CXXFLAGS) -c $< -o $@
-$(OBJ_DIR)/%.o : %.asm
-	$(AS) $(ASFLAGS) $< TO $(OBJ_DIR)/$*.obj
-	hunk2aout $(OBJ_DIR)/$*.obj >/dev/null
-	mv obj.0000.* $@
-
-#-------------------------------------------------------------------------
-# DO NOT DELETE THIS LINE -- make depend depends on it.
